@@ -40,6 +40,10 @@ app.get('/', (req, res) =>{
     res.send('Hello from perfume stores with heroku server')
 })
 
+app.get('/hero', (req, res) => {
+    res.send('Hero meet heroku')
+})
+
 app.listen(port, () =>{
     console.log('Listening the port', port);
 })
