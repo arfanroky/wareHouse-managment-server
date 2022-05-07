@@ -55,26 +55,34 @@ async function run(){
     
         app.post('/addItem', async(req, res) => {
             const getItem = req.body;
-            const result = uploadItemCollection.insertOne(getItem);
+            const result = perfumeCollection.insertOne(getItem);
             res.send({success: "Added Successfully"})
         });
 
 
         app.put('/perfume/:id', async (req, res) => {
             const id = req.params.id;
-            console.log(id);
             const getQuantity = req.body.quantity;
             const filter = {_id: ObjectId(id)};
             const option = {upsert: true}
-            const result = {
+            const decreaseQuantity = {
                 $set:{
                     quantity: getQuantity
                 }
             }
-            const updateQuantity = await perfumeCollection.updateOne(filter, result, option);
+            const updateQuantity = await perfumeCollection.updateOne(filter, decreaseQuantity, option);
 
             res.send({updateQuantity}) 
+        });
+
+        app.delete('/perfume/:id', async(req, res)  => {
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)};
+            const result = await perfumeCollection.deleteOne(query);
+
+            res.send(result);
         })
+
     
     }
     finally{}
