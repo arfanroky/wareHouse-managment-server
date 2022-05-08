@@ -20,7 +20,6 @@ async function run(){
     try{
         await client.connect();
         const perfumeCollection = client.db('perfumeStores').collection('perfume');
-        const uploadItemCollection = client.db('uploadItemStores').collection('item');
 
         app.post('/login', async (req, res) => {
             const email = req.body;
@@ -79,7 +78,6 @@ async function run(){
             const id = req.params.id;
             const query = {_id: ObjectId(id)};
             const result = await perfumeCollection.deleteOne(query);
-
             res.send(result);
         })
 
