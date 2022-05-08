@@ -22,13 +22,17 @@ async function run() {
         const perfumeCollection = client.db('perfumeStores').collection('perfume');
         const uploadCollection = client.db('perfumeStores').collection('uploadPerfume');
 
+        
+        //Auth
         app.post('/login', async (req, res) => {
             const email = req.body;
-            const token = jwt.sign(email, process.env.DB_ACCESS_TOKEN);
-            res.send({ token });
+            console.log(email);
+            const token = await jwt.sign(email, process.env.DB_ACCESS_TOKEN, {
+                expiresIn:'4d'
+            });
+            res.send({token});
             console.log(token);
         })
-
 
         // get perfume
         app.get('/perfume', async (req, res) => {
@@ -83,12 +87,19 @@ async function run() {
         });
 
         // get email address
-        app.get('/uploadPerfume', async (req, res) => {
-            const email = req.query.email;
-            const query = { email: email };
-            const cursor = uploadCollection.find(query)
-            const result = await cursor.toArray();
-            res.send(result)
+        app.get('/uploadPerfume', jwtWithVerify, async (req, res) => {
+        const decodedEmail = req.decoded.email;
+        const email = req.query.email;
+
+        if(decodedEmail === email){ 
+        const query = { email: email };
+        const cursor = uploadCollection.find(query)
+        const result = await cursor.toArray();
+        res.send(result)
+            }
+            else{
+                res.status.send({message:'forbidden access'})
+            }
         })
 
         // upload delete
@@ -106,6 +117,26 @@ async function run() {
 
 run().catch(console.dir)
 
+
+const jwtWithVerify = (req, res, next) => {
+    const tokenAuth = req.headers.authorization;
+    console.log(tokenAuth);
+    if(!tokenAuth){
+        return res.status(401).send({message:'unauthorized access'});
+    }
+    const token = tokenAuth.split(' ')[1];
+    console.log(token);
+
+    jwt.verify(token, process.env.DB_ACCESS_TOKEN, (err, decoded) => {
+        if(err){
+            return res.status(403).send({message:'forbidden access'})
+        }
+        console.log('decoded', decoded);
+        req.decoded = decoded;
+    })
+
+    next();
+} 
 
 
 app.get('/', (req, res) => {
