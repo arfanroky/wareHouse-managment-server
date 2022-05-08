@@ -89,16 +89,17 @@ async function run() {
         // get email address
         app.get('/uploadPerfume', jwtWithVerify, async (req, res) => {
         const decodedEmail = req.decoded.email;
+        console.log(decodedEmail);
         const email = req.query.email;
 
-        if(decodedEmail === email){ 
+        if(email === decodedEmail){ 
         const query = { email: email };
         const cursor = uploadCollection.find(query)
         const result = await cursor.toArray();
         res.send(result)
             }
             else{
-                res.status.send({message:'forbidden access'})
+                res.status(403).send({message:'forbidden access'})
             }
         })
 
@@ -125,7 +126,6 @@ const jwtWithVerify = (req, res, next) => {
         return res.status(401).send({message:'unauthorized access'});
     }
     const token = tokenAuth.split(' ')[1];
-    console.log(token);
 
     jwt.verify(token, process.env.DB_ACCESS_TOKEN, (err, decoded) => {
         if(err){
@@ -133,9 +133,9 @@ const jwtWithVerify = (req, res, next) => {
         }
         console.log('decoded', decoded);
         req.decoded = decoded;
+        next();
     })
 
-    next();
 } 
 
 
