@@ -78,7 +78,7 @@ async function run() {
         // add new item
         app.post('/addItem', async (req, res) => {
             const getItem = req.body;
-            const result = uploadPerfume.insertOne(getItem);
+            const result = uploadCollection.insertOne(getItem);
             res.send({ success: "Added Successfully" })
         });
 
@@ -86,7 +86,7 @@ async function run() {
         app.get('/uploadPerfume', async (req, res) => {
             const email = req.query.email;
             const query = { email: email };
-            const cursor = perfumeCollection.find(query)
+            const cursor = uploadCollection.find(query)
             const result = await cursor.toArray();
             res.send(result)
         })
