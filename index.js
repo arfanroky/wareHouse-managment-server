@@ -21,6 +21,7 @@ async function run(){
         await client.connect();
         const perfumeCollection = client.db('perfumeStores').collection('perfume');
         const uploadCollection = client.db('perfumeStores').collection('uploadPerfume');
+        // const testCollection = client.db('perfumeStores').collection('test');
 
         app.post('/login', async (req, res) => {
             const email = req.body;
@@ -50,15 +51,21 @@ async function run(){
             const query = {email: email};
             const cursor =  uploadCollection.find(query)
             const result = await cursor.toArray();
-            console.log(result);
-
             res.send(result)
         })
 
+   /*      app.get('/test', async(req, res) => {
+            const email = req.query.email;
+            const query = {email: email};
+            const cursor = testCollection.find(query);
+            const result = await cursor.toArray();
+
+            res.send(result);
+        }) */
     
         app.post('/addItem', async(req, res) => {
             const getItem = req.body;
-            const result = perfumeCollection.insertOne(getItem);
+            const result = uploadCollection.insertOne(getItem);
             res.send({success: "Added Successfully"})
         });
 
