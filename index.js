@@ -20,6 +20,7 @@ async function run(){
     try{
         await client.connect();
         const perfumeCollection = client.db('perfumeStores').collection('perfume');
+        const uploadCollection = client.db('perfumeStores').collection('uploadPerfume');
 
         app.post('/login', async (req, res) => {
             const email = req.body;
@@ -43,12 +44,15 @@ async function run(){
             res.send(result);
         })
 
-        app.get('/item', async (req, res) => {
+
+        app.get('/uploadPerfume', async(req, res) => {
             const email = req.query.email;
             const query = {email: email};
-            const cursor = perfumeCollection.find(query);
-            const perfumes = await cursor.toArray();
-            res.send(perfumes);
+            const cursor =  uploadCollection.find(query)
+            const result = await cursor.toArray();
+            console.log(result);
+
+            res.send(result)
         })
 
     
