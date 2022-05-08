@@ -20,8 +20,7 @@ async function run(){
     try{
         await client.connect();
         const perfumeCollection = client.db('perfumeStores').collection('perfume');
-        const uploadCollection = client.db('perfumeStores').collection('uploadPerfume');
-        // const testCollection = client.db('perfumeStores').collection('test');
+        // const uploadCollection = client.db('perfumeStores').collection('uploadPerfume');
 
         app.post('/login', async (req, res) => {
             const email = req.body;
@@ -46,26 +45,17 @@ async function run(){
         })
 
 
-        app.get('/uploadPerfume', async(req, res) => {
+        app.get('/perfume', async(req, res) => {
             const email = req.query.email;
             const query = {email: email};
-            const cursor =  uploadCollection.find(query)
+            const cursor =  perfumeCollection.find(query)
             const result = await cursor.toArray();
             res.send(result)
         })
 
-   /*      app.get('/test', async(req, res) => {
-            const email = req.query.email;
-            const query = {email: email};
-            const cursor = testCollection.find(query);
-            const result = await cursor.toArray();
-
-            res.send(result);
-        }) */
-    
         app.post('/addItem', async(req, res) => {
             const getItem = req.body;
-            const result = uploadCollection.insertOne(getItem);
+            const result = perfumeCollection.insertOne(getItem);
             res.send({success: "Added Successfully"})
         });
 
@@ -91,6 +81,13 @@ async function run(){
             const result = await perfumeCollection.deleteOne(query);
             res.send(result);
         })
+
+        // app.delete('/uploadPerfume/:id', async(req, res)  => {
+        //     const id = req.params.id;
+        //     const query = {_id: ObjectId(id)};
+        //     const result = await perfumeCollection.deleteOne(query);
+        //     res.send(result);
+        // })
 
     
     }
