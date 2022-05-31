@@ -118,7 +118,7 @@ async function run() {
 
 run().catch(console.dir)
 
-
+// VERIFY JWT TOKEN 
 const jwtWithVerify = (req, res, next) => {
     const tokenAuth = req.headers.authorization;
     console.log(tokenAuth);
